@@ -1,0 +1,73 @@
+Training Dataset: 784x60000
+Training Labels: 10x60000 (One Hot Encoded)
+Testing Dataset: 784x10000
+Testing Labels: 10x60000 (One Hot Encoded)
+
+////////////////////////////////////////////////
+4 Layer network
+Layer Dimensions: (784, 300, 300, 300, 10)
+Network Architecture: X ->Linear->ReLU-> Linear->ReLU-> Linear->ReLU-> Linear->Softmax->Output
+Learning Rate: 0.001
+L2 Regularization Parameter: 0.005
+Number of epochs: 50
+Minibatch size: 128
+
+Parameter Initialization
+W: random_uniform from -1 to 1, scaled to sqrt(1/n[l-1]) where l is current layer
+b: zero vector
+
+////////////////////////////////////////////////
+Hyperparameter Tuning (Done on the training set):
+Pass 1: Learning rate=0.0001 ==> Slow learning
+
+Pass 2: Learning rate=0.001
+	RegL2 = 0.001
+	hidden layer size = 40
+Final training cost after epoch 50: 0.239535
+Train Accuracy for 4 layer neural network:  0.924717
+Test Accuracy for 4 layer neural network:  0.8731
+
+Pass 3: (Increasing hidden layer size to decrease bias)
+	Learning rate = 0.001
+	RegL2 = 0.001
+	Hidden Layer size = 300
+Final training cost after epoch 50: 0.143679
+Train Accuracy for 4 layer neural network:  0.985883
+Test Accuracy for 4 layer neural network:  0.8849
+
+Pass 4: (Increasing regularization parameter to decrease variance)
+	Learning rate = 0.001
+	RegL2 = 0.01
+	hidden layer size = 300
+Final training cost after epoch 50: 0.381448
+Train Accuracy for 4 layer neural network:  0.963417
+Test Accuracy for 4 layer neural network:  0.8892
+Rejecting pass 4 only 0.005% test accuracy is improved (0.5 test examples) whereas 2% train accuracy is decreased at the same time.
+
+Pass 5: (Decreasing regularization parameter again)
+	Learning rate = 0.001
+	RegL2 = 0.005
+	hidden layer size = 300
+Final training cost after epoch 50: 0.319984
+Train Accuracy for 4 layer neural network:  0.982983
+Test Accuracy for 4 layer neural network:  0.8924
+==> ACCEPTED HYPERPARAMETERS
+
+////////////////////////////////////////////////
+Logistic Regression (C = 1e5)
+Test Accuracy for Logistic Regression on activations of layer 1 (300 neurons):  0.8753
+Test Accuracy for Logistic Regression on activations of layer 2 (300 neurons):  0.8875
+Test Accuracy for Logistic Regression on activations of layer 3 (300 neurons):  0.8904
+
+
+
+
+
+
+
+
+
+
+
+
+
