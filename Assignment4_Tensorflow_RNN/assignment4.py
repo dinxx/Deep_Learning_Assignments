@@ -6,7 +6,6 @@ from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 
 from data_loader import DataLoader 
-from modules import NN
 
 load = DataLoader()
 
@@ -35,7 +34,27 @@ ny = 10
 T_x = 28
 
 
+# narg=len(sys.argv)
+# s=(sys.argv)
+# mode=s[1][2:]
+# print 'Running Mode: '+ mode
 
+# Net = NN(layers_dims,learning_rate,regL2,num_epochs,mbatch_sz)
+
+# if mode=='train':
+# 	epoch_costs = Net.trainNNModel(X_train,y_train)
+# 	# plt.plot(range(num_epochs),epoch_costs,"r-")
+# 	# plt.show()
+# elif mode=='test':
+# 	Net.NNaccuracy(X_test,y_test)
+# elif mode=='layer=1':
+# 	Net.logistic(X_train,y_train,X_test,y_test,1)
+# elif mode=='layer=2':
+# 	Net.logistic(X_train,y_train,X_test,y_test,2)
+# elif mode=='layer=3':
+# 	Net.logistic(X_train,y_train,X_test,y_test,3)
+# else:
+# 	print "Wrong mode. Please run again."
 
 
 
