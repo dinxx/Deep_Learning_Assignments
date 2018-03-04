@@ -1,15 +1,12 @@
 # Assignment 4 - Cloth Classification Recurrent Neural Network (LSTM/GRU)
 
 ## Task
-1. The task is to build a 4-layer neural network using Tensorflow library for a cloth classification task. Use ReLU non-linearity in all layers.
-2. Once the network is trained, get the activations from all three hidden layers, and use them individually as features to train a logistic regression network defined using the scikit-learn library.
-3. Report results on test set for both the DNN and the 3 logistic regression networks.
-4. Do not use tf.nn, tf.layers or tf.contrib.layers. Define own functions for activations and other functions.
-
-NO PEEPHOLE CONNECTIONS
+1. The task is to build a recurrent neural network using Tensorflow library for a cloth classification task. LSTM and GRU cells have to be custom designed, and not used directly from tf.contrib.rnn.
+2. The network is trained, and the weights are saved for both the LSTM and GRU RNNs for hidden layer sizes 32/64/128/256.
+3. Report results on test set for all possible cases and compare with results from Assignment 3.
 
 ## Data
-The data is the same as Assignment 2. Again, it is to be stored in a folder with path "../data_Ass23" with respect to the directory in which the file train.py is located. Please do not extract the data, since the dataloader.py module does exactly that.
+The data is the same as Assignment 2/3. Again, it is to be stored in a folder with path "../data_Ass23" with respect to the directory in which the file train.py is located. Please do not extract the data, since the dataloader.py module does exactly that.
 
 ### Labels
 Each training and test example is assigned to one of the following labels:
@@ -19,24 +16,27 @@ Each training and test example is assigned to one of the following labels:
 ## Implementation
 Following modules are built:
 1. data_loader.py: Loads all datasets from zip file and creates random shuffled minibatches.
-2. modules.py: Contains the Neural Network class. All parameters are defined as tf.Variable and initialized using Xavier initialization in the constructor. Forward pass is defined using basic tf functions like matmul. Softmax loss is implemented as the cost function. tf.train.AdamOptimizer() is used as the optimizer. Logistic regression function is defined.
-3. assignment3.py: main file for the assignment. Searches for command line arguments so as to decide which operation to perform.
+2. modules.py: Contains the Recurrent Neural Network class. All parameters are defined as tf.Variable and initialized using Xavier initialization in the constructor. Basic tf functions like matmul, add, tanh, sigmoid and softmax are used to calculate the states. Softmax Cross Entropy loss is take as the cost function. tf.train.AdamOptimizer() is used as the optimizer. Two custom cells are built, corresponding to the basic LSTM and GRU cells without peephole connections.
+__The custom cells are implemented as an extension of the RNNCell class in tf.contrib.rnn, which means, overriding atleast the state\_size @property (tuple with the lengths of whichever states you’re keeping track of), output\_size @property (length of the output of the cell) OR the \_\_call\_\_ method.__ The call method accepts parameters input and state and returns the hidden state along with all the states (only hidden) OR (hidden+cell state as a tuple).
+3. main.py: main file for the assignment. Parses command line arguments so as to decide which operation to perform.
 
 ## Usage
-1. python assignment3.py --train: Trains the model and reports final cost, learning curve and train set accuracy.
-2. python assignment3.py --test: Tests the model using weights saved from the training.
-3. python assignment3.py --layer=1: Gets activation of the 1st layer of the trained network and trains a logistic regression network with the given outputs.
-4. python assignment3.py --layer=2: Gets activation of the 2nd layer of the trained network and trains a logistic regression network with the given outputs.
-5. python assignment3.py --layer=3: Gets activation of the 3rd layer of the trained network and trains a logistic regression network with the given outputs.
+python main.py (--train/--test) --hidden_unit=(32/64/128/256) --model=('lstm'/'gru')
+
+1. --hidden_unit: Takes an integer corresponding to the number of hidden units in the cell. (32/64/128/256/others)
+2. --model: Takes the type of RNN Cell used. Possible: 'lstm' or 'gru'
+3. --train: Trains the model over the above chosen conditions and saves weights.
+4. --test: Tests model over the above chosen conditions with the saved weights from (3).
 
 ## Report
-model_parameter_explanation.txt gives a summary of how the network was tuned and what accuracies were obtained.
+model_accuracy.txt gives a summary of how the network accuracies depended on the RNN Cell and hidden unit size.
 
 ## Libraries used
 numpy
 matplotlib
 tensorflow
-scikit-learn
+argparse
+zipfile
 
 ## Authors
 Kunal Jain

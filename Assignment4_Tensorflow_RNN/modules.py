@@ -3,17 +3,15 @@ import numpy as np
 import tensorflow as tf
 
 from tensorflow.contrib.rnn import RNNCell,static_rnn
-
-from sklearn.metrics import accuracy_score
 from data_loader import DataLoader
 
-ip_dims = [28, 10] #  4-layer model (nx nh nh nh ny)
+io_dims = [28, 10] #  28 input dimension mapped to 10 class output
 
 class GRU_Cell(RNNCell):
-	def __init__(self, nh = 32, ip_dims = ip_dims):
+	def __init__(self, nh = 32, io_dims = io_dims):
 		super(GRU_Cell, self).__init__()
 		self.n_h = nh
-		(self.n_x,self.n_y) = ip_dims
+		(self.n_x,self.n_y) = io_dims
 
 		tf.set_random_seed(1) 
 
@@ -48,11 +46,11 @@ class GRU_Cell(RNNCell):
 
 
 class LSTM_Cell(RNNCell):
-	def __init__(self, nh = 32, ip_dims = ip_dims):
+	def __init__(self, nh = 32, io_dims = io_dims):
 		super(LSTM_Cell, self).__init__()
 
 		self.n_h = nh
-		(self.n_x,self.n_y) = ip_dims
+		(self.n_x,self.n_y) = io_dims
 
 		tf.set_random_seed(1)
 
@@ -76,7 +74,6 @@ class LSTM_Cell(RNNCell):
 			c_next = tf.add(tf.multiply(tf.sigmoid(f),c_prev), tf.multiply(tf.sigmoid(u),c_cell))
 
 			h_next = tf.multiply(tf.sigmoid(o),tf.tanh(c_next))
-		# return h_next, self._concat(c_next,h_next)
 		return h_next, (c_next,h_next)
 
 	@property
@@ -89,15 +86,15 @@ class LSTM_Cell(RNNCell):
 
 
 class RNN(object):
-	def __init__(self, mode = 'LSTM', nh =32, Tx = 28, ip_dims = ip_dims, learning_rate = 0.0005, epochs = 50, mbatchsz = 128):
+	def __init__(self, model = 'LSTM', nh =32, Tx = 28, io_dims = io_dims, learning_rate = 0.0005, epochs = 50, mbatchsz = 128):
 		self.learning_rate = learning_rate
 		self.epochs = epochs
 		self.mbatchsz = mbatchsz
 		self.Tx = Tx
-		self.mode = mode
+		self.model = model
 
 		self.n_h = nh
-		(self.n_x,self.n_y) = ip_dims
+		(self.n_x,self.n_y) = io_dims
 
 		self.X,self.y = self.create_placeholders(self.n_x*self.n_x,self.n_y)
 		#check
@@ -117,16 +114,16 @@ class RNN(object):
 		# Unstack to get a list of 'timesteps' tensors of shape (batch_size, n_input)
 		self.x = tf.unstack(self.input,self.Tx,1)
 
-		if mode == 'LSTM':
-			self.cell = LSTM_Cell(self.n_h,ip_dims)
-		elif mode == 'GRU':
-			self.cell = GRU_Cell(self.n_h,ip_dims)
+		if self.model == 'lstm':
+			self.cell = LSTM_Cell(self.n_h,io_dims)
+		elif self.model == 'gru':
+			self.cell = GRU_Cell(self.n_h,io_dims)
 
 		outputs,states = static_rnn(self.cell,self.x,dtype = tf.float32)
 		self.logits = tf.add(tf.matmul(outputs[-1],self.Wo),self.bo)
 		self.pred = tf.nn.softmax(self.logits)
 
-	def trainRNNModel(self,X_train,y_train):
+	def trainRNNmodel(self,X_train,y_train):
 		tf.set_random_seed(1)
 		costs = []
 		load = DataLoader()
@@ -160,8 +157,8 @@ class RNN(object):
 
 			finalCost,trainAcc = sess.run([cost,accuracy], feed_dict = {self.X: mbX, self.y: mby})
 			print "Final training cost after epoch %i: %f"%(self.epochs,finalCost)
-			print "Train Accuracy for ", self.mode, " recurrent neural network: ", trainAcc
-			savepath = saver.save(sess,"./weights/weights.cpkt")
+			print "Train Accuracy for", self.model, "recurrent neural network with %i units: "%(self.n_h), trainAcc
+			savepath = saver.save(sess,"./weights/weights_"+self.model+str(self.n_h)+".cpkt")
 
 		return costs
 
@@ -182,24 +179,24 @@ class RNN(object):
 		saver = tf.train.Saver()
 
 		with tf.Session() as sess:
-			saver.restore(sess,"./weights/weights.cpkt")
+			saver.restore(sess,"./weights/weights_"+self.model+str(self.n_h)+".cpkt")
 			count = tf.equal(tf.argmax(self.pred,1), tf.argmax(self.y,1))
 			accuracy = tf.reduce_mean(tf.cast(count,tf.float32))
 			print "Test Accuracy: ", accuracy.eval({self.X: X_test, self.y: y_test})
 
 
-N = RNN(mode = 'GRU', nh =128)
-L = DataLoader()
+# N = RNN(model = 'GRU', nh =128)
+# L = DataLoader()
 
-X_train,y_train = L.load_data(mode = 'train')
-X_train = X_train.astype(np.float32)
-X_test,y_test = L.load_data(mode = 'test')
-X_test = X_test.astype(np.float32)
-m = X_train.shape[0]
-print X_train.shape,y_train.shape,X_test.shape,y_test.shape,m
+# X_train,y_train = L.load_data(mode = 'train')
+# X_train = X_train.astype(np.float32)
+# X_test,y_test = L.load_data(mode = 'test')
+# X_test = X_test.astype(np.float32)
+# m = X_train.shape[0]
+# print X_train.shape,y_train.shape,X_test.shape,y_test.shape,m
 
-_ = N.trainRNNModel(X_train,y_train)
-N.test_accuracy(X_test,y_test)
+# _ = N.trainRNNmodel(X_train,y_train)
+# N.test_accuracy(X_test,y_test)
 
 
 

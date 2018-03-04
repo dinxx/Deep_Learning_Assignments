@@ -1,0 +1,49 @@
+Training Dataset: 60000x784
+Training Labels: 60000x10 (One Hot Encoded)
+Testing Dataset: 10000x784
+Testing Labels: 10000x10 (One Hot Encoded)
+
+////////////////////////////////////////////////
+RNN with 28x28=784 input dimension: Timesteps (T_x) = 28 and x.shape = (?,28)
+Layer Dimensions: (28, nh, 10)
+
+Input x: (m = 60000, T_x = 28, n_x = 28)
+Hidden state h: (m = 60000, T_x = 28, n_h = 32/64/128/256)
+Output y: (m = 60000(, T_y = 1), n_y = 10)
+
+Network Architecture: 
+[x -> CELL -> h]*T_x ->Softmax->Output
+
+Learning Rate: 0.0008
+Number of epochs: 50
+Minibatch size: 128
+
+Parameter Initialization
+W: tf.contrib.layers.xavier_initializer(seed = 1)
+b: tf.zeros_initializer
+
+////////////////////////////////////////////////
+Statistics:
+
+Hidden Unit Size ||  LSTM Accuracy   ||   GRU Accuracy	 ||
+_________________||  Train  |  Test  ||  Train  |  Test	 ||
+       32        || 89.062  | 83.980 ||  84.375 | 80.780 || 
+       64        || 89.062  | 85.240 ||  87.500 | 83.590 ||        
+      128        || 91.406  | 85.830 ||  92.187 | 84.750 ||           
+      256        || 92.187  | 86.420 ||  91.406 | 85.200 ||          
+
+It is observed that LSTM has higher accuracy than that of GRU, with hidden unit sizes being same.
+Also, as hidden unit size increases, a general trend of increasing accuracy is observed.
+
+
+
+
+
+
+
+
+
+
+
+
+
