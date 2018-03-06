@@ -1,2 +1,2 @@
-model_checkpoint_path: "weights_lstm256.cpkt"
-all_model_checkpoint_paths: "weights_lstm256.cpkt"
+model_checkpoint_path: "weights_lstm64.cpkt"
+all_model_checkpoint_paths: "weights_lstm64.cpkt"

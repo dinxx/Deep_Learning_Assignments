@@ -27,10 +27,10 @@ Statistics:
 
 Hidden Unit Size ||  LSTM Accuracy   ||   GRU Accuracy	 ||
 _________________||  Train  |  Test  ||  Train  |  Test	 ||
-       32        || 89.062  | 83.980 ||  84.375 | 80.780 || 
-       64        || 89.062  | 85.240 ||  87.500 | 83.590 ||        
-      128        || 91.406  | 85.830 ||  92.187 | 84.750 ||           
-      256        || 92.187  | 86.420 ||  91.406 | 85.200 ||          
+       32        || 89.062  | 83.570 ||  84.375 | 80.780 || 
+       64        || 89.843  | 84.810 ||  87.500 | 83.590 ||        
+      128        || 91.406  | 85.830 ||  89.062 | 84.390 ||           
+      256        || 92.187  | 86.420 ||  91.406 | 85.140 ||          
 
 It is observed that LSTM has higher accuracy than that of GRU, with hidden unit sizes being same.
 Also, as hidden unit size increases, a general trend of increasing accuracy is observed.
