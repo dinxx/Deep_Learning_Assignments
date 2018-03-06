@@ -6,6 +6,25 @@ from matplotlib import pyplot as plt
 from modules import RNN
 from data_loader import DataLoader 
 import argparse
+import urllib2
+import tarfile
+import os
+
+# Downloading old weight folder online if none exists (used for test data)
+if not os.path.exists('./weights'):
+	url = "https://github.com/kj7kunal/Deep_Learning_Assignments/raw/master/Assignment4_Tensorflow_RNN/weights.tar.gz"
+	res = urllib2.urlopen(url)
+	zipres = res.read()
+	floc = "./weights.tar.gz"
+	with open(floc,'w') as f:
+		f.write(zipres)
+	print "Weight download complete!"
+	tar = tarfile.open(floc, "r:gz")
+	tar.extractall()
+	tar.close()
+	os.remove(floc)
+else:
+	print "Weights present. Not downloading."
 
 load = DataLoader()
 
